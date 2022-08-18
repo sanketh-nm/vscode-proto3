@@ -31,7 +31,7 @@ export class Proto3DefinitionProvider implements vscode.DefinitionProvider {
         const matchedGroups = importRegExp.exec(lineText)
         if (matchedGroups && matchedGroups.length == 5) {
             const importFilePath = matchedGroups[2]
-            const location = this.findImportDefinition(importFilePath);
+            const location = await this.findImportDefinition(importFilePath);
             if (location) {
                 return location;
             }
@@ -46,7 +46,7 @@ export class Proto3DefinitionProvider implements vscode.DefinitionProvider {
         const messageInRpcRegExp = new RegExp(`^\\s*rpc\\s*\\w+${rpcReqOrRspPattern}returns${rpcReqOrRspPattern}[;{].*$`, 'i');
 
         if (messageRegExp.test(lineText) || messageInRpcRegExp.test(lineText) || messageInMap.test(lineText)) {
-            const location = this.findEnumOrMessageDefinition(document, targetDefinition);
+            const location = await this.findEnumOrMessageDefinition(document, targetDefinition);
             if (location) {
                 return location;
             }
@@ -81,11 +81,8 @@ export class Proto3DefinitionProvider implements vscode.DefinitionProvider {
     }
 
     private async findImportDefinition(importFileName: string): Promise<vscode.Location> {
-        const files = await fg(path.join(vscode.workspace.rootPath, '**', importFileName));
-        const importPath = files[0].toString();
-        // const data = fs.readFileSync(importPath);
-        // const lines = data.toString().split('\n');
-        // const lastLine = lines[lines.length  - 1];
+        
+        const importPath = path.join(path.resolve(vscode.window.activeTextEditor.document.fileName, '..') , importFileName);
         const uri = vscode.Uri.file(importPath);
         const definitionStartPosition = new vscode.Position(0, 0);
         const definitionEndPosition = new vscode.Position(0, 0);
