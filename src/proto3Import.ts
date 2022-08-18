@@ -13,7 +13,7 @@ export module Proto3Import {
         let importPaths = [];
         while (importStatement = importStatementRegex.exec(fullDocument)) {
             const protoFileName = importStatement[2];
-            const searchPath = path.join(vscode.workspace.rootPath, '**', protoFileName);
+            const searchPath  = path.join(path.resolve(vscode.window.activeTextEditor.document.fileName, '..') , protoFileName);
             importPaths.push(searchPath);
         }
         return importPaths;

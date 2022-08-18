@@ -58,9 +58,9 @@ export class Proto3Compiler {
 
     private runProtoc(args: string[], opts?: cp.ExecFileOptions, callback?: (stdout: string, stderr: string) =>void) {
         let protocPath = this._config.getProtocPath(this._isProtocInPath)
-        if (protocPath == "?") {
-            return // protoc is not configured
-        }
+        if (protocPath == "") {
+            protocPath = "." //assume current directory
+         }
 
         if( !opts ) {
             opts = {};
